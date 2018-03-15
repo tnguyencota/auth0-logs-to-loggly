@@ -1,6 +1,6 @@
 const async = require('async');
 const moment = require('moment');
-const Loggly = require('loggly');
+const Logdna = require('logdna');
 const loggingTools = require('auth0-log-extension-tools');
 const config = require('../lib/config');
 const logger = require('../lib/logger');
@@ -15,35 +15,45 @@ module.exports = (storage) =>
       return next();
     }
 
-    const loggly = Loggly.createClient({
-      token: config('LOGGLY_CUSTOMER_TOKEN'),
-      subdomain: config('LOGGLY_SUBDOMAIN') || '-',
-      tags: ['auth0']
-    });
+    const logdna_opts = {
+      app: config('LOGDNA_APP_NAME')
+    };
+    
+    const API_KEY = config('LOGDNA_API_KEY');
+    
+    console.log('This is my API Key: %j', API_KEY);
+    
+    const logdna = Logdna.createLogger(API_KEY, logdna_opts);
 
     const onLogsReceived = (logs, callback) => {
       if (!logs || !logs.length) {
         return callback();
       }
 
-      logger.info(`Sending ${logs.length} logs to Loggly.`);
+      // logger.info('Printing log message...');
+      // var i = 0;
+      // logs.forEach(function (entry) {
+      //   logger.info(`auth0 log #${i++}`);
+      //   logger.info(JSON.stringify(entry));
+      // });
 
-      loggly.log(logs, (err) => {
-        if (err) {
-          logger.info('Error sending logs to Loggly', err);
-          return callback(err);
-        }
+      logger.info(`Sending ${logs.length} logs to Logdna.`);
 
-        logger.info('Upload complete.');
+      for (var j = 0; j < logs.length; j++) {
+        logger.info(JSON.stringify(logs[j]));
+        logdna.log(JSON.stringify(logs[j]));
+      }
 
+      logger.info('Upload complete.');
+
+        //need this otherwise will get 500 error from extension run
         return callback();
-      });
     };
 
     const slack = new loggingTools.reporters.SlackReporter({
       hook: config('SLACK_INCOMING_WEBHOOK_URL'),
-      username: 'auth0-logs-to-loggly',
-      title: 'Logs To Loggly'
+      username: 'cota-auth0-to-logdna',
+      title: 'Logs To Logdna'
     });
 
     const options = {
