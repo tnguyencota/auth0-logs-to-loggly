@@ -1,6 +1,6 @@
 const async = require('async');
 const moment = require('moment');
-const Loggly = require('loggly');
+const Logdna = require('logdna');
 const loggingTools = require('auth0-log-extension-tools');
 const config = require('../lib/config');
 const logger = require('../lib/logger');
@@ -15,9 +15,8 @@ module.exports = (storage) =>
       return next();
     }
 
-    const loggly = Loggly.createClient({
-      token: config('LOGGLY_CUSTOMER_TOKEN'),
-      subdomain: config('LOGGLY_SUBDOMAIN') || '-',
+    const logdna = Logdna.createClient({
+      token: config('LOGDNA_API_KEY'),
       tags: ['auth0']
     });
 
@@ -26,11 +25,11 @@ module.exports = (storage) =>
         return callback();
       }
 
-      logger.info(`Sending ${logs.length} logs to Loggly.`);
+      logger.info(`Sending ${logs.length} logs to Logdna.`);
 
-      loggly.log(logs, (err) => {
+      logdna.log(logs, (err) => {
         if (err) {
-          logger.info('Error sending logs to Loggly', err);
+          logger.info('Error sending logs to Logdna', err);
           return callback(err);
         }
 
@@ -42,8 +41,8 @@ module.exports = (storage) =>
 
     const slack = new loggingTools.reporters.SlackReporter({
       hook: config('SLACK_INCOMING_WEBHOOK_URL'),
-      username: 'auth0-logs-to-loggly',
-      title: 'Logs To Loggly'
+      username: 'cota-auth0-to-logdna',
+      title: 'Logs To Logdna'
     });
 
     const options = {

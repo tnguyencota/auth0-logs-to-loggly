@@ -1,15 +1,12 @@
 {
-  "title": "Auth0 Logs to Loggly",
-  "name": "auth0-logs-to-loggly",
+  "title": "Cota Auth0 to Logdna",
+  "name": "cota-auth0-to-logdna",
   "version": "2.0.2",
   "author": "auth0",
-  "description": "This extension will take all of your Auth0 logs and export them to Loggly",
+  "description": "This extension will take all of your Auth0 logs and export them to Logdna",
   "initialUrlPath": "/login",
   "type": "cron",
   "category": "log_export",
-  "repository": "https://github.com/auth0-extensions/auth0-logs-to-loggly",
-  "docsUrl": "https://auth0.com/docs/extensions/loggly",
-  "logoUrl": "https://cdn.auth0.com/extensions/auth0-logs-to-loggly/assets/logo.svg",
   "keywords": [
     "auth0",
     "extension"
@@ -25,13 +22,10 @@
       "description": "The amount of logs to batch before sending to Logstash. A single cron execution will send multiple batches.",
       "default": 100
     },
-    "LOGGLY_CUSTOMER_TOKEN": {
-      "description": "Loggly customer token",
+    "LOGDNA_API_KEY": {
+      "description": "Logdna api key",
       "required": true,
       "type": "password"
-    },
-    "LOGGLY_SUBDOMAIN": {
-      "description": "Loggly subdomain"
     },
     "START_FROM": {
       "description": "Checkpoint ID of log to start from."
