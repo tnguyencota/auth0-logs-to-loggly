@@ -24,13 +24,17 @@
       "description": "The amount of logs to batch before sending to Logdna. A single cron execution will send multiple batches.",
       "default": 100
     },
-    "LOGDNA_API_KEY": {
-      "description": "Logdna api key",
+    "HOSTNAME": {
+      "description": "The hostname of the log source",
+      "required": true
+    },
+    "LOGDNA_INGESTION_KEY": {
+      "description": "Logdna ingestion key",
       "required": true,
       "type": "password"
     },
     "LOGDNA_APP_NAME": {
-      "description": "Logdna app name",
+      "description": "The application name of the log source",
       "required": true
     },
     "START_FROM": {

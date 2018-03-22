@@ -1,7 +1,8 @@
 const async = require('async');
 const moment = require('moment');
-const Logdna = require('logdna');
+//const Logdna = require('logdna');
 const loggingTools = require('auth0-log-extension-tools');
+const Logdna = require('../lib/logdna-logging');
 const config = require('../lib/config');
 const logger = require('../lib/logger');
 
@@ -15,39 +16,15 @@ module.exports = (storage) =>
       return next();
     }
 
-    const logdna_opts = {
-      app: config('LOGDNA_APP_NAME')
-    };
-    
-    const API_KEY = config('LOGDNA_API_KEY');
-    
-    console.log('This is my API Key: %j', API_KEY);
-    
-    const logdna = Logdna.createLogger(API_KEY, logdna_opts);
-
     const onLogsReceived = (logs, callback) => {
       if (!logs || !logs.length) {
         return callback();
       }
 
-      // logger.info('Printing log message...');
-      // var i = 0;
-      // logs.forEach(function (entry) {
-      //   logger.info(`auth0 log #${i++}`);
-      //   logger.info(JSON.stringify(entry));
-      // });
-
       logger.info(`Sending ${logs.length} logs to Logdna.`);
 
-      for (var j = 0; j < logs.length; j++) {
-        logger.info(JSON.stringify(logs[j]));
-        logdna.log(JSON.stringify(logs[j]));
-      }
-
-      logger.info('Upload complete.');
-
-        //need this otherwise will get 500 error from extension run
-        return callback();
+      const logdna = new Logdna(config('HOSTNAME'), config('LOGDNA_INGESTION_KEY'), config('LOGDNA_APP_NAME'),);
+      logdna.send(logs, callback);
     };
 
     const slack = new loggingTools.reporters.SlackReporter({
