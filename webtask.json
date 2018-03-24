@@ -37,6 +37,15 @@
       "description": "The application name of the log source",
       "required": true
     },
+    "LOGDNA_USER_NAME": {
+      "description": "Logdna user name",
+      "required": true
+    },
+    "LOGDNA_USER_PASSWORD": {
+      "description": "Logdna user password",
+      "required": true,
+      "type": "password"
+    },
     "START_FROM": {
       "description": "Checkpoint ID of log to start from."
     },

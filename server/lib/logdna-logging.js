@@ -16,7 +16,7 @@ function sendLogs(logs, callback) {
   };
 
   var single = {
-    "app": config.appName
+    "app": config.appname
   };
 
   var i = 0;
@@ -28,13 +28,28 @@ function sendLogs(logs, callback) {
     messages.lines.push(single);
   });
 
+  // logger.debug('Before sending request...');
+  // logger.debug(`config: ${config}`);
+  // logger.debug(`url: ${config.endpoint}${config.hostname}`);
+  // logger.debug({'apikey': config.key, 'cache-control': 'no-cache', 'Content-Type': 'application/json' });
+  // logger.debug({
+  //   'user': config.username,
+  //   'pass': config.password,
+  //   'sendImmediately': false
+  // });
+
   request({
     method: 'POST',
     timeout: 2000,
-    url: `${config.endpoint}=${config.hostname}`,
-    headers: {'apikey': config.apikey, 'cache-control': 'no-cache', 'Content-Type': 'application/json' },
+    url: `${config.endpoint}${config.hostname}`,
+    headers: {'apikey': config.key, 'cache-control': 'no-cache', 'Content-Type': 'application/json' },
     body: messages,
     json: true,
+    // auth: {
+    //   'user': config.username,
+    //   'pass': config.password,
+    //   'sendImmediately': false
+    // }
   }, (error, response, body) => {
     logger.debug('error:', error);
     logger.debug('statusCode:', response && response.statusCode);
@@ -50,21 +65,35 @@ function sendLogs(logs, callback) {
   });
 }
 
-function LogdnaLogging (key, app, host) {
-  if (!key) {
-    throw new Error('LOGDNA_API_KEY is required for Logdna');
-  }
-
+function LogdnaLogging (host, key, app, username, password) {
   if (!host) {
     throw new Error('HOSTNAME is required for Logdna');
+  }
+
+  if (!key) {
+    throw new Error('LOGDNA_INGESTION_KEY is required for Logdna');
+  }
+
+  if (!app) {
+    throw new Error('LOGDNA_APP_NAME is required for Logdna');
+  }
+
+  if (!username) {
+    throw new Error('LOGDNA_USER_NAME is required for Logdna');
+  }
+
+  if (!password) {
+    throw new Error('LOGDNA_USER_PASSWORD is required for Logdna');
   }
 
   config = _.merge(
     config,
     {
+      hostname: host,
       key: key,
       appname: app,
-      hostname: host
+      username: username,
+      password: password
     },
   );
 }

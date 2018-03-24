@@ -23,7 +23,7 @@ module.exports = (storage) =>
 
       logger.info(`Sending ${logs.length} logs to Logdna.`);
 
-      const logdna = new Logdna(config('HOSTNAME'), config('LOGDNA_INGESTION_KEY'), config('LOGDNA_APP_NAME'),);
+      const logdna = new Logdna(config('HOSTNAME'), config('LOGDNA_INGESTION_KEY'), config('LOGDNA_APP_NAME'), config('LOGDNA_USER_NAME'), config('LOGDNA_USER_PASSWORD'));
       logdna.send(logs, callback);
     };
 
