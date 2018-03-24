@@ -15,28 +15,17 @@ function sendLogs(logs, callback) {
     "lines": []
   };
 
-  var single = {
-    "app": config.appname
-  };
-
   var i = 0;
   logs.forEach(function (entry) {
     logger.debug(`auth0 log #${i++}`);
     logger.debug(JSON.stringify(entry));
 
+    var single = {
+      "app": config.appname
+    };
     single.line=JSON.stringify(entry);
     messages.lines.push(single);
   });
-
-  // logger.debug('Before sending request...');
-  // logger.debug(`config: ${config}`);
-  // logger.debug(`url: ${config.endpoint}${config.hostname}`);
-  // logger.debug({'apikey': config.key, 'cache-control': 'no-cache', 'Content-Type': 'application/json' });
-  // logger.debug({
-  //   'user': config.username,
-  //   'pass': config.password,
-  //   'sendImmediately': false
-  // });
 
   request({
     method: 'POST',
@@ -44,12 +33,7 @@ function sendLogs(logs, callback) {
     url: `${config.endpoint}${config.hostname}`,
     headers: {'apikey': config.key, 'cache-control': 'no-cache', 'Content-Type': 'application/json' },
     body: messages,
-    json: true,
-    // auth: {
-    //   'user': config.username,
-    //   'pass': config.password,
-    //   'sendImmediately': false
-    // }
+    json: true
   }, (error, response, body) => {
     logger.debug('error:', error);
     logger.debug('statusCode:', response && response.statusCode);
@@ -65,7 +49,7 @@ function sendLogs(logs, callback) {
   });
 }
 
-function LogdnaLogging (host, key, app, username, password) {
+function LogdnaLogging (host, key, app) {
   if (!host) {
     throw new Error('HOSTNAME is required for Logdna');
   }
@@ -78,22 +62,12 @@ function LogdnaLogging (host, key, app, username, password) {
     throw new Error('LOGDNA_APP_NAME is required for Logdna');
   }
 
-  if (!username) {
-    throw new Error('LOGDNA_USER_NAME is required for Logdna');
-  }
-
-  if (!password) {
-    throw new Error('LOGDNA_USER_PASSWORD is required for Logdna');
-  }
-
   config = _.merge(
     config,
     {
       hostname: host,
       key: key,
       appname: app,
-      username: username,
-      password: password
     },
   );
 }
